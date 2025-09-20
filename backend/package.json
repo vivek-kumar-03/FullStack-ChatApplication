@@ -2,18 +2,28 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "seed": "node src/seeds/user.seed.js",
+    "test-email": "node test-email.js",
+    "test-email-config": "node test-email-config.js",
+    "test-email-direct": "node direct-email-test.js",
+    "debug-email": "node debug-email.js",
+    "comprehensive-email-test": "node comprehensive-email-test.js",
+    "smtp-test": "node smtp-connection-test.js",
+    "simple-email-test": "node simple-email-test.js",
+    "email-test": "node email-test.js",
+    "detailed-email-test": "node detailed-email-test.js",
+    "complete-email-test": "node complete-email-test.js"
   },
   "keywords": [],
   "author": "",
-  "type": "module",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
-    "chat-application": "file:..",
     "cloudinary": "^2.7.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -21,6 +31,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
+    "nodemailer": "^7.0.6",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
