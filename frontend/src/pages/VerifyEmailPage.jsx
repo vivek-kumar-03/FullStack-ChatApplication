@@ -22,17 +22,41 @@ const VerifyEmailPage = () => {
       }
 
       try {
-        const response = await axiosInstance.get(`/auth/verify-email?token=${token}`);
-        setStatus("success");
-        setMessage(response.data.message);
+        // We're using the full URL here since we're redirecting from the backend
+        const response = await axiosInstance.get(`/auth/verify-email?token=${token}`, {
+          // Don't redirect automatically, handle it manually
+          validateStatus: function (status) {
+            return status < 500; // Resolve only if the status code is less than 500
+          }
+        });
+        
+        // If we get a redirect response, it means verification was successful
+        if (response.status === 200) {
+          setStatus("success");
+          setMessage("Email verified successfully! You can now log in.");
+        } else if (response.status === 400) {
+          setStatus("error");
+          setMessage(response.data?.message || "Invalid or expired verification token.");
+        } else {
+          setStatus("error");
+          setMessage("Failed to verify email. Please try again.");
+        }
       } catch (error) {
         setStatus("error");
-        setMessage(error.response?.data?.message || "Failed to verify email.");
+        setMessage("Failed to verify email. Please try again.");
       }
     };
 
     verifyEmail();
   }, [location.search]);
+
+  const handleLoginRedirect = () => {
+    navigate("/login");
+  };
+
+  const handleSignupRedirect = () => {
+    navigate("/signup");
+  };
 
   return (
     <div className="min-h-screen flex flex-col lg:grid lg:grid-cols-2 bg-gradient-to-br from-primary to-secondary">
@@ -61,7 +85,7 @@ const VerifyEmailPage = () => {
                   <CheckCircle className="h-12 w-12 mx-auto text-success" />
                   <p className="text-lg text-base-content">{message}</p>
                   <button
-                    onClick={() => navigate("/login")}
+                    onClick={handleLoginRedirect}
                     className="btn btn-primary w-full mt-4"
                   >
                     Go to Login
@@ -73,12 +97,20 @@ const VerifyEmailPage = () => {
                 <>
                   <AlertCircle className="h-12 w-12 mx-auto text-error" />
                   <p className="text-lg text-base-content">{message}</p>
-                  <button
-                    onClick={() => navigate("/signup")}
-                    className="btn btn-primary w-full mt-4"
-                  >
-                    Back to Signup
-                  </button>
+                  <div className="flex flex-col gap-2 mt-4">
+                    <button
+                      onClick={handleLoginRedirect}
+                      className="btn btn-primary w-full"
+                    >
+                      Go to Login
+                    </button>
+                    <button
+                      onClick={handleSignupRedirect}
+                      className="btn btn-outline w-full"
+                    >
+                      Back to Signup
+                    </button>
+                  </div>
                 </>
               )}
             </div>

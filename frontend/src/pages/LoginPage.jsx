@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import BackButton from "../components/BackButton";
 import toast from "react-hot-toast";
@@ -13,6 +13,7 @@ const LoginPage = () => {
     password: "",
   });
   const { login, isLoggingIn } = useAuthStore();
+  const location = useLocation();
 
   const validateForm = () => {
     if (!formData.email) return toast.error("Email is required");
@@ -31,6 +32,19 @@ const LoginPage = () => {
       await login(formData);
     }
   };
+
+  // Check for verification status in URL parameters
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const verified = searchParams.get('verified');
+    const error = searchParams.get('error');
+
+    if (verified === 'true') {
+      toast.success("Email verified successfully! You can now log in.");
+    } else if (verified === 'false' && error === 'verification_failed') {
+      toast.error("Email verification failed. Please try again.");
+    }
+  }, [location]);
 
   return (
     <div className="min-h-screen flex flex-col lg:grid lg:grid-cols-2 bg-gradient-to-br from-primary to-secondary">

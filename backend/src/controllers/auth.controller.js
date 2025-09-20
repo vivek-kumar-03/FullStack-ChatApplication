@@ -134,12 +134,14 @@ export const verifyEmail = async (req, res) => {
     user.verificationTokenExpires = undefined;
     await user.save();
 
-    res.status(200).json({
-      message: "Email verified successfully! You can now log in."
-    });
+    // Redirect to login page with success message
+    const loginUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/login?verified=true`;
+    res.redirect(302, loginUrl);
   } catch (error) {
     console.log("Error in verifyEmail controller", error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    // Redirect to login page with error message
+    const loginUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/login?verified=false&error=verification_failed`;
+    res.redirect(302, loginUrl);
   }
 };
 
